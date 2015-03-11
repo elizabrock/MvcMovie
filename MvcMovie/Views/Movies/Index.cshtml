@@ -2,6 +2,7 @@
 
 @{
     ViewBag.Title = "Index";
+    ViewBag.possible_rates = new List<int> { 1, 2, 3, 4, 5 };
 }
 
 <h2>Index</h2>
@@ -57,21 +58,22 @@
             @Html.DisplayFor(modelItem => item.Rating)
         </td>
         <td>
-            @using( Html.BeginForm())
+
+            @*@using (Html.BeginForm("UpdateRating", "Movies", FormMethod.Post, new { id = "ratingform"}))
             {
-                <select>
-                    <option>1</option>
-                    <option>2</option>
-                    <option>3</option>
-                    <option>4</option>
-                    <option>5</option>
-                </select>
+                @Html.DropDownList("Value",new SelectList(ViewBag.possible_rates),new {id = "ratingselect"})
+                @Html.Hidden("movieID",item.ID)
                 <input type="submit" value="Rate Movie" />
+            }*@
+            @using (Html.BeginForm("UpdateRating", "Movies", new { id = "ratingform"+item.ID.ToString() }))
+            {
+                @Html.DropDownList("Value",new SelectList(ViewBag.possible_rates),new {@class = "ratings", id = "ratingselect"+item.ID.ToString(), datamovie = item.ID})
+                @Html.Hidden("movieID",item.ID)
             }
         </td>
         <td>N/A</td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.ID }) |
+            @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
             @Html.ActionLink("Details", "Details", new { id=item.ID }) |
             @Html.ActionLink("Delete", "Delete", new { id=item.ID })
         </td>
