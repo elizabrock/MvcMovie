@@ -7,14 +7,17 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using MvcMovie.Models;
+using Microsoft.AspNet.Identity;
 
 namespace MvcMovie.Controllers
 {
     public class MoviesController : Controller
     {
         private MovieDBContext db = new MovieDBContext();
+        private RatingDBContext rdb = new RatingDBContext();
 
         // GET: Movies
+        [Authorize]
         public ActionResult Index(string movieGenre, string searchString)
         {
             var GenreLst = new List<string>();
@@ -24,7 +27,7 @@ namespace MvcMovie.Controllers
                            select d.Genre;
 
             GenreLst.AddRange(GenreQry.Distinct());
-            ViewBag.movieGenre = new SelectList(GenreLst);
+            ViewBag.movieGenre = GenreLst;
 
             var movies = from m in db.Movies
                          select m;
