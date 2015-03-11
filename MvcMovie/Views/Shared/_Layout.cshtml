@@ -39,6 +39,18 @@
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
+    <script type="text/javascript">
+        $(".ratings").on("change",function () {
+            $.ajax({
+                url: '/Movies/UpdateRating',
+                method: "POST",
+                data: $(this).parent().serialize(),
+                success: function (data) {
+                   // alert("hey");
+                }
+            });
+        });
+    </script>
     @RenderSection("scripts", required: false)
 </body>
 </html>
