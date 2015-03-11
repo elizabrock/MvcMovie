@@ -63,6 +63,43 @@ namespace MvcMovie.Controllers
             return View();
         }
 
+        [HttpPost]
+        public ActionResult UpdateRating(FormCollection form)
+        {
+            int rate = Convert.ToInt32(form.Get("Value"));
+            int movie_id = Convert.ToInt32(form.Get("movieID"));
+            string userid = User.Identity.GetUserId();
+               Movie movie = db.Movies.Find(movie_id); // Movie Context
+                if (movie == null)
+                {
+                    return HttpNotFound();
+                }
+
+            // Alwys use the same DB context class for READS and WRites. (consistency)
+              var a_rating = from r in movie.Ratings
+                   where r.MovieID == movie_id && r.ApplicationUserID == userid
+                    select r;
+              a_rating.ToList<Rating>();
+             
+
+            //List<Rating> a_rating = movie.Ratings.Where(r => r.ApplicationUserID == userid && r.MovieID == movie_id).ToList<Rating>();
+              int rcount = a_rating.ToList().Count();  
+            if (a_rating.ToList().Count() > 0) {
+                a_rating.First().Value = rate;
+            } else {
+                //Movie movie = db.Movies.Find(movie_id); // Movie Context
+                movie.Ratings.Add(new Rating { Value = rate, ApplicationUserID = userid }); // Movie Context: MovieID is prepopulated
+            }
+            db.SaveChanges(); // Movie Context
+
+            if (Request.IsAjaxRequest())
+            {
+                return PartialView("_NullPartial");
+            } else {
+                return RedirectToAction("Index");
+            }
+        }
+
         // POST: Movies/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
